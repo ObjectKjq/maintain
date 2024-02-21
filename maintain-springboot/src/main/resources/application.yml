@@ -1,0 +1,21 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/maintain?characterEncoding=utf-8&useSSL=false
+    username: root
+    password: kjq
+
+mybatis:
+  configuration:
+    # 开启驼峰命名，自动家表中的下划线映射到实体类的驼峰中
+    map-underscore-to-camel-case: true
+  mapper-locations: classpath*:mapper/*.xml
+
+xiaolinbao:
+  jwt:
+    header: Authorization # 前端保存token的键(key)
+    expire: 604800 # 7天，s为单位
+    secret: kjfhsdajiquwey8723 # 生成token的密钥
