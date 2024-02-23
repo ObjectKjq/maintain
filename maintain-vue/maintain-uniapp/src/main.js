@@ -21,6 +21,16 @@ $http.afterRequest = function(){
   uni.hideLoading()
 }
 
+// 数据请求失败封装全局方法，当数据请求失败就调用此方法
+uni.$showMsg = function(title = '数据请求失败', duration = 1500) {
+  // 提示数据请求失败
+  uni.showToast({
+    title,
+    duration,//1.5s显示
+    icon: 'none'
+  })
+}
+
 const app = new Vue({
   ...App
 })

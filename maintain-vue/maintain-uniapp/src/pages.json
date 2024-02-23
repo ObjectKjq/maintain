@@ -8,16 +8,73 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
+			"path": "pages/home/home",
+			"style": {}
+		},{
+			"path": "pages/search/search",
+			"style": {}
+		},{
+			"path": "pages/appoint/appoint",
+			"style": {}
+		},{
+			"path": "pages/my/my",
+			"style": {}
 		}
 	],
+	// 分包配置
+	"subPackages": [
+		{//这里有一个subpkg分包，页面在pages中声明
+			"root": "subpkg",
+			"pages": [
+				{
+					"path": "article_details/article_details",
+					"style": {}
+				},
+				{
+					"path": "appoint_list/appoint_list",
+					"style": {}
+				},
+				{
+					"path": "appoint_details/appoint_details",
+					"style": {}
+				},
+				{
+					"path": "update_user/update_user",
+					"style": {}
+				}
+			]
+		}
+	],
+	"tabBar": {
+		"selectedColor": "#e0620d",
+		"list": [
+			{
+				"pagePath": "pages/home/home",
+				"text": "首页",
+				"iconPath": "static/tarbar/tarbar_.png",
+				"selectedIconPath": "static/tarbar/tarbar_0_active.png"
+			},{
+				"pagePath": "pages/search/search",
+				"text": "搜索",
+				"iconPath": "static/tarbar/tarBar-search-C.png",
+				"selectedIconPath": "static/tarbar/tarBar-search-C-copy.png"
+			},{
+				"pagePath": "pages/appoint/appoint",
+				"text": "预约",
+				"iconPath": "static/tarbar/tarbar_2.png",
+				"selectedIconPath": "static/tarbar/tarbar_3_active.png"
+			},{
+				"pagePath": "pages/my/my",
+				"text": "我的",
+				"iconPath": "static/tarbar/tarbar_1.png",
+				"selectedIconPath": "static/tarbar/tarbar_1_active.png"
+			}
+		]
+	},
 	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "家电维修服务平台",
+		"navigationBarBackgroundColor": "#e0620d",
 		"backgroundColor": "#F8F8F8"
 	}
 }
