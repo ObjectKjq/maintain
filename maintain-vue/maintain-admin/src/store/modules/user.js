@@ -28,11 +28,13 @@ const mutations = {
   }
 }
 
+// 异步操作
 const actions = {
-  // user login
+  // 把token存储到vuex
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
+      // 登录接口
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
@@ -44,7 +46,7 @@ const actions = {
     })
   },
 
-  // get user info
+  // 通过token获取用户角色等用户信息
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
@@ -72,13 +74,15 @@ const actions = {
     })
   },
 
-  // user logout
+  // 退出登录
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
+        // 清空vuex中的数据
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
+        // 重置路由系统
         resetRouter()
 
         // reset visited views and cached views
@@ -92,7 +96,7 @@ const actions = {
     })
   },
 
-  // remove token
+  // 清空数据
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')

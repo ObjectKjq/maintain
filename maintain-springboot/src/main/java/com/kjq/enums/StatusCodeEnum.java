@@ -2,7 +2,7 @@ package com.kjq.enums;
 
 public enum StatusCodeEnum {
     JURISDICTION_ERROR(40300, "没有权限"),
-    SUCCESS(20000, "操作成功"),
+    SUCCESS(20000, "成功"),
     ERROR(40000, "失败"),
     ERROR_AUTHENTICATION(40100, "没有登陆");
     private final Integer code;

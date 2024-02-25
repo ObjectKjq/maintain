@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 //登录认证成功的处理器
 @Component
@@ -32,15 +34,18 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         httpServletResponse.setContentType("application/json;charset=UTF-8");
         ServletOutputStream outputStream = httpServletResponse.getOutputStream();
 
+
         // 生成JWT，并放置到请求头中
+        Map<String, String> token = new HashMap<>();
         String jwt = jwtUtils.generateToken(authentication.getName());
-        httpServletResponse.setHeader(jwtUtils.getHeader(), jwt);
+        token.put("token", jwt);
+        //httpServletResponse.setHeader(jwtUtils.getHeader(), jwt);
 
 
         //封装user数据
         User user = userService.getByUsername(authentication.getName());
         user.setUserPassword("");
-        FFResult<User> result = FFResult.success(StatusCodeEnum.SUCCESS, user);
+        FFResult<Map> result = FFResult.success(StatusCodeEnum.SUCCESS, token);
 
         outputStream.write(JSONUtil.toJsonStr(result).getBytes(StandardCharsets.UTF_8));
         outputStream.flush();

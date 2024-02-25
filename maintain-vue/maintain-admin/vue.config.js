@@ -29,14 +29,28 @@ module.exports = {
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
+  // devServer: {
+  //   port: port,
+  //   open: true,
+  //   overlay: {
+  //     warnings: false,
+  //     errors: true
+  //   },
+  //   // 关闭mock服务
+  //   // before: require('./mock/mock-server.js')
+  // },
   devServer: {
-    port: port,
-    open: true,
-    overlay: {
-      warnings: false,
-      errors: true
-    },
-    before: require('./mock/mock-server.js')
+    proxy: {
+      // 设置请求前缀，如果有请求前缀就转发，
+      '/api': {
+        ws: false,
+        target: 'http://localhost:8081',
+        // 把/api用空串替换掉，然后发送给后端服务器
+        pathRewrite: {'^/api': ''},
+        // 告诉后端服务器你来自哪里
+        changeOrigin: false
+      }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
