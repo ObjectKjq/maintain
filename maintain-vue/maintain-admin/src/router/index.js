@@ -75,27 +75,259 @@ export const constantRoutes = [
 // 动态路由，本文件没有使用。其他文件导入使用
 // 这里的规则是根据用户的角色，去计算出当前角色能访问哪些路由
 export const asyncRoutes = [
+  // 以下配置的是维修师路由
   {
     path: '/',
     component: Layout,
-    // 当访问/时重定向到以下路径
-    redirect: '/dashboard',
+    redirect: 'publish',
+    alwaysShow: true,
+    name: 'Appoint',
+    meta: {
+      title: '预约管理',
+      icon: 'documentation',
+      roles: ['maintain']
+    },
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
-        meta: { 
-          title: 'Dashboard',
-          icon: 'dashboard', 
-          affix: true, 
+        path: 'publish',
+        component: () => import('@/views/maintain-appoint/publish-appoint'),
+        name: 'Publish',
+        meta: {
+          // 管理员标题名
+          title: '发布预约',
+          roles: ['maintain']
+        }
+      },
+      {
+        path: 'appraise',
+        component: () => import('@/views/maintain-appoint/appraise'),
+        name: 'Appraise',
+        meta: {
+          // 管理员标题名
+          title: '估价管理',
+          roles: ['maintain']
+        }
+      },
+      {
+        path: 'verify',
+        component: () => import('@/views/maintain-appoint/verify'),
+        name: 'Verify',
+        meta: {
+          // 管理员标题名
+          title: '维修完成管理',
+          roles: ['maintain']
+        }
+      }
+    ]
+  },
+  {
+    path: '/article',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/maintain-article/maintain-article'),
+        name: 'Article',
+        meta: { title: '发布文章', icon: 'edit', roles: ['maintain']}
+      }
+    ]
+  },
+  {
+    path: '/skill',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/maintain-skill/maintain-skill'),
+        name: 'Skill',
+        meta: { title: '技能管理', icon: 'skill', roles: ['maintain'] }
+      }
+    ]
+  },
+  {
+    path: '/certificate',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/maintain-certificate/maintain-certificate'),
+        name: 'Certificate',
+        meta: { title: '证书管理', icon: 'education', roles: ['maintain'] }
+      }
+    ]
+  },
+  {
+    path: '/scope',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/maintain-scope/maintain-scope'),
+        name: 'Scope',
+        meta: { title: '业务范围管理', icon: 'international', roles: ['maintain'] }
+      }
+    ]
+  },
+  {
+    path: '/consult',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/maintain-consult/maintain-consult'),
+        name: 'Consult',
+        meta: { title: '消息管理', icon: 'message', roles: ['maintain'] }
+      }
+    ]
+  },
+  // 以下配置的是管理员路由
+  {
+    path: '/',
+    component: Layout,
+    redirect: '/user',
+    children: [
+      {
+        path: 'user',
+        component: () => import('@/views/admin-user/admin-user'),
+        name: 'User',
+        meta: {
+          title: '用户管理',
+          icon: 'peoples', 
+          // affix: true, 
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/article',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin-article/admin-article'),
+        name: 'Article',
+        meta: {
+          title: '文章管理',
+          icon: 'documentation', 
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/feedback',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin-feedback/admin-feedback'),
+        name: 'Feedback',
+        meta: {
+          title: '反馈管理',
+          icon: 'bug', 
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/report',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin-report/admin-report'),
+        name: 'Report',
+        meta: {
+          title: '举报管理',
+          icon: 'el-icon-warning', 
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/sort',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin-sort/admin-sort'),
+        name: 'Sort',
+        meta: {
+          title: '分类管理',
+          icon: 'component', 
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/audit',
+    component: Layout,
+    redirect: '/audit/article',
+    meta: {
+      title: '审核',
+      icon: 'el-icon-s-claim', 
+      roles: ['admin'] 
+    },
+    children: [
+      {
+        path: 'article',
+        component: () => import('@/views/admin-audit/article'),
+        name: 'Article',
+        meta: {
+          title: '文章审核', 
+          roles: ['admin'] 
+        }
+      },
+      {
+        path:'certificate',
+        component: () => import('@/views/admin-audit/certificate'),
+        name: 'Certificate',
+        meta: {
+          title: '证书审核',
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/consult',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin-consult/admin-consult'),
+        name: 'Consult',
+        meta: {
+          title: '咨询管理',
+          icon: 'message', 
+          roles: ['admin'] 
+        }
+      }
+    ]
+  },
+  {
+    path: '/score',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/admin-score/admin-score'),
+        name: 'Score',
+        meta: {
+          title: '评分管理',
+          icon: 'form', 
           roles: ['admin'] 
         }
       }
     ]
   },
   // 原本效果路由
-  ...bak,
+  // ...bak,
+
 ]
 
 const createRouter = () => new Router({

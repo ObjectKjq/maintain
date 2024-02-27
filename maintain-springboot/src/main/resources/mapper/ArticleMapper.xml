@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kjq.mapper.ArticleMapper">
+    <select id="getArticles" resultType="com.kjq.POJO.Article">
+        select * from article
+
+        where article_status = 1
+        <if test="sortId != null and sortId != 0">
+            and sort_id = #{sortId}
+        </if>
+        <if test="searchText != null">
+            and title like '%${searchText}%'
+        </if>
+        limit #{page}, #{num}
+
+    </select>
+</mapper>

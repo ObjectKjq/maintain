@@ -7,9 +7,10 @@
     clearButton="auto" 
     cancelButton="none" 
     @input="input" />
-    <view class="article-list">
-        <uni-card @click="toArticle" title="基础卡片" extra="额外信息">
-            <text class="uni-body">这是一个基础卡片示例，此示例展示了一个标题加标题额外信息的标准卡片。</text>
+    <view class="article-list" v-if="articles.length">
+
+        <uni-card v-for="item in articles" :key="item.id" @click="toArticle(item.id)" :title="item.title" :extra="item.createTime.substring(0, 10)">
+            <text class="uni-body">{{item.content.substring(0, 40)}}</text>
         </uni-card>
     </view>
   </view>
@@ -23,12 +24,20 @@ export default {
             timer: null,
             // 搜索关键字
             kw: '',
+            // 默认是第一页
+            page: 1,
+            // 每页六条数据
+            num: 6,
+            // 文章列表数据
+            articles: [],
+            // articleList节流阀，防止发送过多数据请求
+            isloading: false
         }
     },
     methods: {
-        toArticle(){
+        toArticle(id){
             uni.navigateTo({
-                url:'/subpkg/article_details/article_details'
+                url:`/subpkg/article_details/article_details?id=${id}`
             });
         },
         input(e) {
@@ -39,10 +48,31 @@ export default {
                 // 五百毫秒没有触发输入事件，搜索关键字
                 this.kw = e;
                 // 根据关键词调用搜索建议，这里触发搜索事件
-                // this.getSearchList();
-                console.log('----input:', e)
+                this.page = 1;
+                this.articles = [];
+                this.getSearchList();
             }, 500);
         },
+        getSearchList(){
+            if(this.kw == null || this.kw == "" || this.kw == undefined) return;
+            uni.$http.get('/getArticles', {
+                // 第几页
+                page: this.page,
+                // 每页多少条数据
+                num: this.num,
+                // 搜索查询的内容
+                searchText: this.kw,
+            }).then((res) => {
+                this.articles.push(...res.data.data);
+            })
+        }
+    },
+    // 接收上拉触顶行为
+    onReachBottom(){
+        // 节流阀打开就不发送请求
+        if(this.isloading) return;
+        this.page += 1;
+        this.getSearchList();
     },
 }
 </script>

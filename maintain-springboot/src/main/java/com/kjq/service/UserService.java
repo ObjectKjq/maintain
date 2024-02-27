@@ -9,4 +9,6 @@ public interface UserService {
     Integer getUserAuthorityInfo(Integer userId);
 
     FFResult getUserByAccount(String account);
+
+    FFResult getToken(String openid);
 }

@@ -1,11 +1,13 @@
 package com.kjq.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.kjq.POJO.User;
 import com.kjq.enums.StatusCodeEnum;
 import com.kjq.mapper.UserMapper;
 import com.kjq.model.vo.UserVo;
 import com.kjq.service.UserService;
 import com.kjq.utils.FFResult;
+import com.kjq.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     //根据用户名查询用户信息
     @Override
@@ -52,5 +57,25 @@ public class UserServiceImpl implements UserService {
         }
         userVo.setRoles(list);
         return FFResult.success(StatusCodeEnum.SUCCESS, userVo);
+    }
+
+    @Override
+    public FFResult getToken(String openid) {
+        //判断账号是否存在
+        User user = userMapper.queryAccountUser(openid);
+        if (user == null){
+            User addUser = new User();
+            addUser.setUsername("张三");
+            addUser.setUserAccount(openid);
+            addUser.setUserRole(0);
+            addUser.setAvatarUrl("https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png");
+            addUser.setUserStatus(1);
+            addUser.setCreateTime(DateUtil.formatDate(DateUtil.date()));
+            if(!userMapper.addUser(addUser)){
+                return FFResult.success(StatusCodeEnum.ERROR);
+            }
+        }
+        //根据账号生成token，并返回
+        return FFResult.success(StatusCodeEnum.SUCCESS, jwtUtils.generateToken(openid));
     }
 }

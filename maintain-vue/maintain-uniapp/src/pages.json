@@ -9,10 +9,18 @@
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
 			"path": "pages/home/home",
-			"style": {}
+			"style": {
+				// 下拉加载更多距离
+				"onReachBottomDistance": 150,
+				"enablePullDownRefresh": true,
+				"backgroundColor": "#f8f8f8"
+			}
 		},{
 			"path": "pages/search/search",
-			"style": {}
+			"style": {
+				// 下拉加载更多距离
+				"onReachBottomDistance": 150
+			}
 		},{
 			"path": "pages/appoint/appoint",
 			"style": {}

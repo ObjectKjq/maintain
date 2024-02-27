@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import './uni.promisify.adaptor'
 import {$http} from '@escook/request-miniprogram'
+import store from './store/index'
 
 Vue.config.productionTip = false
 
@@ -15,6 +16,13 @@ $http.beforeRequest = function(options){
   uni.showLoading({
     title: '数据加载中...'
   });
+  // 获取token放到header中
+  if(store.state.user.token != undefined){
+    options.header = {
+      "token": store.state.user.token
+    }
+  }
+  
 }
 // 响应拦截器
 $http.afterRequest = function(){
@@ -32,6 +40,7 @@ uni.$showMsg = function(title = '数据请求失败', duration = 1500) {
 }
 
 const app = new Vue({
-  ...App
+  ...App,
+  store,
 })
 app.$mount()

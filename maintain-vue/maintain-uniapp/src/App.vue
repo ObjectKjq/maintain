@@ -1,13 +1,15 @@
 <script>
+import {login} from './api'
 	export default {
 		onLaunch: function() {
-			console.log('App Launch')
+			// 全局只调用一次
+			login();
 		},
 		onShow: function() {
-			console.log('App Show')
+			// 小程序从后台进入前台调用
 		},
 		onHide: function() {
-			console.log('App Hide')
+			// 小程序从前台进入后台调用
 		}
 	}
 </script>
