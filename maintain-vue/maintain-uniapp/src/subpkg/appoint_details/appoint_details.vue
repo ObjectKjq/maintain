@@ -3,13 +3,13 @@
     <uni-title type="h1" title="预约详情" align="center"></uni-title>
     <view>
         <uni-list>
-            <uni-list-item title="维修师名：小明" />
-            <uni-list-item title="维修师评分：9.1" />
-            <uni-list-item title="维修师证书：软件设计师" />
-            <uni-list-item title="业务范围：北京，天津，郑州" />
-            <uni-list-item title="预约时间：2024-1-20"/>
-            <uni-list-item title="维修电器：冰箱，空调，手机"/>
-            <uni-list-item title="业务介绍：第三方接口龙卷风法律的开始经理反馈的萨芬就扣税的垃圾" />
+            <uni-list-item :title="'维修师名：' + appointData.username" />
+            <uni-list-item :title="'维修师评分：' + appointData.score" />
+            <uni-list-item :title="'维修师证书：' + appointData.certificates" />
+            <uni-list-item :title="'业务范围：' + appointData.scopes" />
+            <uni-list-item :title="'预约时间：' + appointData.appointTime.substring(0, 10)"/>
+            <uni-list-item :title="'维修电器：' + appointData.skills"/>
+            <uni-list-item :title="'描述信息：' + appointData.content" />
         </uni-list>
     </view>
     <view class="appointBotton">
@@ -19,25 +19,23 @@
     <!-- 输入框示例 -->
     <uni-popup ref="inputDialog" type="dialog" background-color="#fff">
         <view class="fromContent">
+            <uni-title type="h1" title="填写预约信息" align="center"></uni-title>
             <uni-forms-item label="真实姓名" required>
                 <uni-easyinput v-model="baseFormData.name" placeholder="请输入姓名" />
             </uni-forms-item>
             <uni-forms-item label="电话" required>
-                <uni-easyinput v-model="baseFormData.name" placeholder="请输入电话" />
+                <uni-easyinput v-model="baseFormData.phone" placeholder="请输入电话" />
             </uni-forms-item>
             <uni-forms-item label="详细地址" required>
-                <uni-easyinput v-model="baseFormData.name" placeholder="请输入地址" />
+                <uni-easyinput v-model="baseFormData.address" placeholder="请输入地址" />
             </uni-forms-item>
             <uni-forms-item label="描述信息" required>
-                <uni-easyinput v-model="baseFormData.name" placeholder="请输入描述" />
+                <uni-easyinput v-model="baseFormData.message" placeholder="请输入描述" />
             </uni-forms-item>
-            <view class="example-body">
-                <uni-file-picker limit="3" title="最多选择9张图片"></uni-file-picker>
-            </view>
         </view>
         
         <view class="button">
-            <button type="primary" size="mini" @click="appoint">预约</button>
+            <button type="primary" size="mini" @click="byAppoint">预约</button>
             <button type="default" size="mini" @click="close">取消</button>
         </view>
     </uni-popup>
@@ -46,10 +44,27 @@
 
 <script>
 export default {
+    data() {
+        return {
+            appointData:{},
+            // 用户填写的预约信息
+            baseFormData:{}
+        }
+    },
     methods: {
         // 咨询维修师
         consult(){
 
+        },
+        // 调用预约接口预约
+        async byAppoint(){
+            const {data: res} = await uni.$http.put("/updateStatus", this.baseFormData)
+            if(res.code == 20000){
+                this.$refs.inputDialog.close()
+                return uni.$showMsg('预约成功')
+            }else{
+                return uni.$showMsg('预约失败')
+            }
         },
         // 打开弹窗
         appoint() {
@@ -60,6 +75,11 @@ export default {
 			this.$refs.inputDialog.close()
 		}
     },
+    onLoad(option){
+        const appoint = JSON.parse(decodeURIComponent(option.appoint));
+        this.appointData = appoint;
+        this.baseFormData.id = appoint.id;
+    }
 }
 </script>
 

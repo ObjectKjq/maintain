@@ -19,7 +19,11 @@ $http.beforeRequest = function(options){
   // 获取token放到header中
   if(store.state.user.token != undefined){
     options.header = {
-      "token": store.state.user.token
+      "Authorization": store.state.user.token
+    }
+  }else if(options.url.indexOf('/login') !== -1){
+    options.header = {
+      "content-type": "application/x-www-form-urlencoded",
     }
   }
   

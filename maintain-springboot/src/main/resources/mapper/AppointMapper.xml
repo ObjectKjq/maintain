@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kjq.mapper.AppointMapper">
+    <resultMap id="returnAppoints" type="com.kjq.model.vo.AppointListVo">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="appoint_id" property="appointId" jdbcType="BIGINT"/>
+        <result column="avatar" property="avatar" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="DATE"/>
+        <result column="appoint_time" property="appointTime" jdbcType="DATE"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <collection property="scopes" ofType="java.lang.String" javaType="java.util.List">
+            <result column="scope"/>
+        </collection>
+        <collection property="skills" ofType="java.lang.String" javaType="java.util.List">
+            <result column="skill"/>
+        </collection>
+        <collection property="certificates" ofType="java.lang.String" javaType="java.util.List">
+            <result column="certificate"/>
+        </collection>
+    </resultMap>
+    <select id="getAppoints" resultMap="returnAppoints">
+        SELECT
+            appoint.id AS id,
+            appoint.appoint_id AS appoint_id,
+            user.avatar_url AS avatar,
+            user.username AS username,
+            appoint.create_time AS create_time,
+            appoint.appoint_time AS appoint_time,
+            appoint.content AS content,
+
+            scope.content AS scope,
+            skill.content AS skill,
+            certificate.content AS certificate
+        FROM appoint
+                 JOIN `user` ON appoint.appoint_id = user.id
+                 JOIN scope ON appoint.appoint_id = scope.user_id
+                 JOIN skill ON appoint.appoint_id = skill.user_id
+                 JOIN certificate ON appoint.appoint_id = certificate.user_id
+        WHERE appoint.status = 0
+          AND appoint.appoint_status = 1
+          AND user.user_status = 1
+          AND scope.scope_status = 1
+          AND skill.skill_status = 1
+          AND certificate.certificate_status = 1
+        <if test="name != null">
+            and user.username like '%${name}%'
+        </if>
+        <if test="city != null">
+            and scope.content like '%${city}%'
+        </if>
+        <if test="skill != null">
+            and skill.content like '%${skill}%'
+        </if>
+        <if test="time != null">
+            and appoint.appoint_time like '%${time}%'
+        </if>
+        LIMIT #{page}, #{num}
+    </select>
+</mapper>

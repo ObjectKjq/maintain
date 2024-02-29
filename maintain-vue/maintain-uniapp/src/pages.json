@@ -49,6 +49,10 @@
 				{
 					"path": "update_user/update_user",
 					"style": {}
+				},
+				{
+					"path": "appoint_admin/appoint_admin",
+					"style": {}
 				}
 			]
 		}

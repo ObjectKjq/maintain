@@ -7,29 +7,35 @@ export const login = () => {
         success: async function (loginRes) {
             const {data: res} = await uni.$http.post('/signin', {
                 code: loginRes.code,
-            })
-            // 请求成功
-            if(res.code == 20000){
-                getUser(res.data)
-                return uni.$showMsg('登录成功')
-            // 请求失败
-            }else{
-                return uni.$showMsg('登录失败')
-            }
+            },)
+            getUser(res.data)
         }
     });
 }
 
 // 获取用户信息
-export const getUser = (token) => {
-    uni.$http.get('/info', {
-        token,
-    }).then((res) =>{
-        // 添加用户信息和token到vuex中
-        let user = {...res.data.data, "token": token}
-        store.commit('ADDUSER', user)
+export const getUser = (account) => {
+    // 先获取token
+    uni.$http.post('/login', {
+        username: account,
+        password: "123",
+    }).then((res1)=>{
+        console.log()
+        uni.$http.get('/info', {
+            token: res1.data.data.token
+        }).then((res) =>{
+            // 添加用户信息和token到vuex中
+            let user = {...res.data.data, "token": res1.data.data.token}
+            store.commit('ADDUSER', user)
+            // 请求成功
+            if(res.data.code == 20000){
+                return uni.$showMsg('登录成功')
+            // 请求失败
+            }else{
+                return uni.$showMsg('登录失败')
+            }
+        })
     })
-    
 }
 
 

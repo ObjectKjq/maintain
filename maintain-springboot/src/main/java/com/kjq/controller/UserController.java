@@ -10,7 +10,9 @@ import com.kjq.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping("/signin")
-    public String signin(@RequestBody JSONObject jsonObject){
+    public String signin(HttpServletRequest req, @RequestBody JSONObject jsonObject){
         //获取用户的openid表示用户的账号，张三表示默认用户名
         String code = jsonObject.getStr("code");
         String requestUrl = "https://api.weixin.qq.com/sns/jscode2session";
@@ -93,7 +95,20 @@ public class UserController {
             }
         }
         Map map = JSON.parseObject(result.toString(), Map.class);
+
         //实现登录返回token
-        return JSONUtil.toJsonStr(userService.getToken((String)map.get("openid")));
+        return JSONUtil.toJsonStr(userService.getToken(req, (String)map.get("openid")));
+    }
+
+    @PostMapping("/files")
+    public String files(@RequestParam("file") MultipartFile file){
+        return JSONUtil.toJsonStr(userService.upload(file));
+    }
+
+    @PutMapping("/updateUser")
+    public String updateUser(@RequestBody JSONObject jsonObject){
+        String name = jsonObject.getStr("name");
+        String sex = jsonObject.getStr("sex");
+        return JSONUtil.toJsonStr(userService.updateUser(name, sex));
     }
 }

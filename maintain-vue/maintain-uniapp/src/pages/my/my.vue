@@ -1,17 +1,18 @@
 <template>
   <view>
-    <uni-card title="用户名" 
+    <uni-card :title="user.name" 
     :isFull="true"
-     sub-title="账号"
-     extra="性别"
-     :thumbnail="avatar">
+     :thumbnail="user.avatar">
     </uni-card>
     <uni-list>
       <uni-list-item :to="`/subpkg/update_user/update_user`" showArrow title="修改信息"/>
-      <uni-list-item :to="`/subpkg/appoint_list/appoint_list`" showArrow title="预约信息"/>
-      <uni-list-item :to="`/subpkg/appoint_list/appoint_list`" showArrow title="价格估算成功待确认"/>
+      <!-- status=1，预约成功，可以删除预约 -->
+      <uni-list-item :to="`/subpkg/appoint_admin/appoint_admin?status=1`" showArrow title="预约管理"/>
+      <!-- status=2，价格估算成功，用户确认 -->
+      <uni-list-item :to="`/subpkg/appoint_admin/appoint_admin?status=2`" showArrow title="价格估算"/>
       <!-- 可以举报 -->
-      <uni-list-item :to="`/subpkg/appoint_list/appoint_list`" showArrow title="待打分"/>
+      <!-- status=4，维修成功打分，也可以举报 -->
+      <uni-list-item :to="`/subpkg/appoint_admin/appoint_admin?status=4`" showArrow title="等待打分"/>
     </uni-list>
     <button class="button" @click="inputDialogToggle">反馈</button>
     <!-- 输入框示例 -->
@@ -26,14 +27,28 @@
 export default {
   data() {
     return {
-      avatar: 'https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png',
+      user: {},
     }
   },
   methods: {
     inputDialogToggle() {
       this.$refs.inputDialog.open()
     },
+    async dialogInputConfirm(val){
+      // 添加返回信息
+      const {data: res} = await uni.$http.post("/addFeedback", {
+        content: val
+      })
+      if(res.code == 20000){
+        return uni.$showMsg("反馈成功")
+      }else{
+        return uni.$showMsg("反馈失败")
+      }
+    }
   },
+  onShow(){
+    this.user = this.$store.state.user;
+  }
 }
 </script>
 
