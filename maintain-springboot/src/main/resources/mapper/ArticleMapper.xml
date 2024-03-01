@@ -16,4 +16,35 @@
         limit #{page}, #{num}
 
     </select>
+
+    <select id="getMaintainArticles" resultType="com.kjq.model.vo.ArticleVo">
+        select
+               article.id as id,
+               sort.content as sort,
+               user.username as name,
+               article.create_time as create_time,
+               article.title as title,
+               article.content as content
+        from article
+        join sort on article.sort_id = sort.id
+        join `user` on  article.user_id = user.id
+        where article.article_status = 1
+        and article.user_id = #{id}
+        limit #{page}, #{limit}
+    </select>
+
+    <select id="getAdminArticles" resultType="com.kjq.model.vo.ArticleVo">
+        select
+            article.id as id,
+            sort.content as sort,
+            user.username as name,
+            article.create_time as create_time,
+            article.title as title,
+            article.content as content
+        from article
+                 join sort on article.sort_id = sort.id
+                 join `user` on  article.user_id = user.id
+        where article.article_status = #{status}
+            limit #{page}, #{limit}
+    </select>
 </mapper>

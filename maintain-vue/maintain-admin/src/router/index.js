@@ -76,20 +76,19 @@ export const constantRoutes = [
 // 这里的规则是根据用户的角色，去计算出当前角色能访问哪些路由
 export const asyncRoutes = [
   // 以下配置的是维修师路由
-  {
+  {//管理员和维修师公用
     path: '/',
     component: Layout,
-    redirect: 'publish',
-    alwaysShow: true,
+    redirect: 'home',
     name: 'Appoint',
     meta: {
       title: '预约管理',
       icon: 'documentation',
-      roles: ['maintain']
+      roles: ['maintain', 'admin']
     },
     children: [
       {
-        path: 'publish',
+        path: 'home',
         component: () => import('@/views/maintain-appoint/publish-appoint'),
         name: 'Publish',
         meta: {
@@ -117,18 +116,38 @@ export const asyncRoutes = [
           title: '维修完成管理',
           roles: ['maintain']
         }
+      },
+      {
+        path: 'home',
+        component: () => import('@/views/admin-user/admin-user'),
+        name: 'User',
+        meta: {
+          title: '用户管理',
+          icon: 'peoples', 
+          roles: ['admin'] 
+        }
       }
     ]
   },
   {
-    path: '/article',
+    path: '/wArticle',
     component: Layout,
+    meta: {
+      title: '文章管理',
+      icon: 'edit',
+      roles: ['maintain']
+    },
     children: [
       {
         path: 'index',
         component: () => import('@/views/maintain-article/maintain-article'),
+        name: 'WArticle',
+        meta: { title: '发布文章', roles: ['maintain']}
+      },{
+        path: 'article',
+        component: () => import('@/views/maintain-article/article'),
         name: 'Article',
-        meta: { title: '发布文章', icon: 'edit', roles: ['maintain']}
+        meta: { title: '文章管理', roles: ['maintain']}
       }
     ]
   },
@@ -168,7 +187,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  {
+  {//管理员和维修师公用
     path: '/consult',
     component: Layout,
     children: [
@@ -176,29 +195,21 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/maintain-consult/maintain-consult'),
         name: 'Consult',
-        meta: { title: '消息管理', icon: 'message', roles: ['maintain'] }
-      }
-    ]
-  },
-  // 以下配置的是管理员路由
-  {
-    path: '/',
-    component: Layout,
-    redirect: '/user',
-    children: [
+        meta: { title: '咨询管理', icon: 'message', roles: ['maintain'] }
+      },
       {
-        path: 'user',
-        component: () => import('@/views/admin-user/admin-user'),
-        name: 'User',
+        path: 'index',
+        component: () => import('@/views/admin-consult/admin-consult'),
+        name: 'Consult',
         meta: {
-          title: '用户管理',
-          icon: 'peoples', 
-          // affix: true, 
+          title: '咨询管理',
+          icon: 'message', 
           roles: ['admin'] 
         }
       }
     ]
   },
+  // 以下配置的是管理员路由
   {
     path: '/article',
     component: Layout,
@@ -288,22 +299,6 @@ export const asyncRoutes = [
         name: 'Certificate',
         meta: {
           title: '证书审核',
-          roles: ['admin'] 
-        }
-      }
-    ]
-  },
-  {
-    path: '/consult',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/admin-consult/admin-consult'),
-        name: 'Consult',
-        meta: {
-          title: '咨询管理',
-          icon: 'message', 
           roles: ['admin'] 
         }
       }

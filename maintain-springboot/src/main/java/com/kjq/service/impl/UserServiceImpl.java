@@ -188,4 +188,10 @@ public class UserServiceImpl implements UserService {
         }
         return FFResult.error(StatusCodeEnum.ERROR);
     }
+
+    @Override
+    public FFResult getAdminUsers(Integer page, Integer limit) {
+        page = (page - 1) * limit;
+        return FFResult.success(StatusCodeEnum.SUCCESS, userMapper.getAdminUsers(page, limit));
+    }
 }

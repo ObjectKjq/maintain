@@ -9,6 +9,7 @@ import com.kjq.utils.FFResult;
 import com.kjq.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -110,5 +111,11 @@ public class UserController {
         String name = jsonObject.getStr("name");
         String sex = jsonObject.getStr("sex");
         return JSONUtil.toJsonStr(userService.updateUser(name, sex));
+    }
+
+    @Secured({"ROLE_admin"})
+    @GetMapping("/admin/getUsers")
+    public String getUsers(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit){
+        return JSONUtil.toJsonStr(userService.getAdminUsers(page, limit));
     }
 }

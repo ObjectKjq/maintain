@@ -39,4 +39,10 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         return FFResult.error(StatusCodeEnum.ERROR);
     }
+
+    @Override
+    public FFResult getAdminFeedback(Integer page, Integer limit) {
+        page = (page - 1) * limit;
+        return FFResult.success(StatusCodeEnum.SUCCESS, feedbackMapper.getAdminFeedback(page, limit));
+    }
 }

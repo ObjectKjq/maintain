@@ -35,4 +35,5 @@ public interface AppointMapper {
     @Update("update appoint set status = 5 where id = #{id} and by_appoint_id = #{id1} and appoint_status = 1")
     boolean updateStatus(Integer id, Integer id1);
 
+    List<Appoint> getMaintainAppoints(Integer page, Integer limit, Integer status, String title, Integer id);
 }

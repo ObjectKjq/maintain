@@ -59,7 +59,6 @@ export default {
 	},
 	async updateUser(){
 		const {data: res} = await uni.$http.put('/updateUser', this.baseFormData)
-		console.log(res)
 		if(res.code == 20000){
 			this.$store.state.user.name = this.baseFormData.name;
 			this.baseFormData.name = "";

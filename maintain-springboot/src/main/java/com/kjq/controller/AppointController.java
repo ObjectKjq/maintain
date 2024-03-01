@@ -71,4 +71,16 @@ public class AppointController {
         Integer rate = jsonObject.getInt("rate");
         return JSONUtil.toJsonStr(appointService.mark(id, rate));
     }
+
+    //维修师查询预约信息
+    @Secured({"ROLE_maintain"})
+    @GetMapping("/maintain/getAppoints")
+    public String getAppoints(
+            @RequestParam("status") Integer status,
+            @RequestParam("page") Integer page,
+            @RequestParam("limit") Integer limit,
+            @RequestParam(value = "title", required = false) String title
+    ){
+        return JSONUtil.toJsonStr(appointService.getMaintainAppoints(status, page, limit, title));
+    }
 }

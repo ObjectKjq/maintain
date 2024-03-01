@@ -18,4 +18,6 @@ public interface AppointService {
     FFResult tPrice(Integer id);
 
     FFResult mark(Integer id, Integer rate);
+
+    FFResult getMaintainAppoints(Integer status, Integer page, Integer limit, String title);
 }

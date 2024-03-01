@@ -18,4 +18,6 @@ public interface UserService {
     FFResult upload(MultipartFile file);
 
     FFResult updateUser(String name, String sex);
+
+    FFResult getAdminUsers(Integer page, Integer limit);
 }

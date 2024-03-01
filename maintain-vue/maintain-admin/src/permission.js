@@ -43,7 +43,6 @@ router.beforeEach(async(to, from, next) => {
       const hasRoles = store.getters.roles && store.getters.roles.length > 0
       if (hasRoles) {
         // 拿到角色后放行
-        
         next()
       } else {
         // 没有角色

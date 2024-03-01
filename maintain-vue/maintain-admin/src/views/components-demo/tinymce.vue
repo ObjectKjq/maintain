@@ -9,6 +9,7 @@
     </div>
     <div class="editor-content" v-html="content" />
   </div>
+  
 </template>
 
 <script>

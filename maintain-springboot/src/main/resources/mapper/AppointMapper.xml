@@ -59,4 +59,14 @@
         </if>
         LIMIT #{page}, #{num}
     </select>
+    <select id="getMaintainAppoints" resultType="com.kjq.POJO.Appoint">
+        SELECT * FROM appoint
+        WHERE `status` = #{status}
+            AND appoint_id = #{id}
+            AND appoint_status = 1
+        <if test="title != null">
+            AND content LIKE '%${title}%'
+        </if>
+            LIMIT #{page}, #{limit}
+    </select>
 </mapper>

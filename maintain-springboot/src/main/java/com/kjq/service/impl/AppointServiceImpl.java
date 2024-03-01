@@ -138,4 +138,14 @@ public class AppointServiceImpl implements AppointService {
         }
         return FFResult.success(StatusCodeEnum.SUCCESS);
     }
+
+    @Override
+    public FFResult getMaintainAppoints(Integer status, Integer page, Integer limit, String title) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userMapper.queryAccountUser(username);
+        page = (page - 1) * limit;
+
+        return FFResult.success(StatusCodeEnum.SUCCESS, appointMapper.getMaintainAppoints(page, limit, status, title, user.getId()));
+    }
 }

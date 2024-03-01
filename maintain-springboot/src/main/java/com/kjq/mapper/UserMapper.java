@@ -2,10 +2,9 @@ package com.kjq.mapper;
 
 
 import com.kjq.POJO.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -22,4 +21,7 @@ public interface UserMapper {
 
     @Update("update `user` set username = #{username}, gender = #{gender} where id = #{id} and user_status = 1")
     boolean updateUser(User user);
+
+    @Select("select * from `user` limit #{page}, #{limit}")
+    List<User> getAdminUsers(Integer page, Integer limit);
 }

@@ -4,9 +4,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.kjq.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class FeedbackController {
@@ -20,4 +19,11 @@ public class FeedbackController {
         String content = jsonObject.getStr("content");
         return JSONUtil.toJsonStr(feedbackService.addFeedback(content));
     }
+
+    @Secured({"ROLE_admin"})
+    @GetMapping("/admin/getFeedbacks")
+    public String getAdminFeedbacks(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit){
+        return JSONUtil.toJsonStr(feedbackService.getAdminFeedback(page, limit));
+    }
+
 }
