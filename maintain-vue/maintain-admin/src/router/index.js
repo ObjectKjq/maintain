@@ -142,7 +142,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/maintain-article/maintain-article'),
         name: 'WArticle',
-        meta: { title: '发布文章', roles: ['maintain']}
+        meta: { title: '发布文章', roles: ['maintain']},
       },{
         path: 'article',
         component: () => import('@/views/maintain-article/article'),
@@ -318,6 +318,27 @@ export const asyncRoutes = [
           roles: ['admin'] 
         }
       }
+    ]
+  },
+  // 配置用户中心
+  {
+    path: '/profile',
+    component: Layout,
+    meta: {
+      icon: 'peoples',
+    },
+    children:[
+      {
+        path: 'index',
+        component: () => import('@/views/user-center/user-center'),
+        name: 'UserCenter',
+        meta: {
+          // 管理员标题名
+          title: '用户中心',
+          roles: ['admin', 'maintain']
+        }
+      }
+      
     ]
   },
   // 原本效果路由

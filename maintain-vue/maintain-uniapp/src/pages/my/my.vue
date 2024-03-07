@@ -13,6 +13,8 @@
       <!-- 可以举报 -->
       <!-- status=4，维修成功打分，也可以举报 -->
       <uni-list-item :to="`/subpkg/appoint_admin/appoint_admin?status=4`" showArrow title="等待打分"/>
+      <!-- 消息列表 -->
+      <uni-list-item :to="`/subpkg/consult_list/consult_list`" showArrow title="消息列表"/>
     </uni-list>
     <button class="button" @click="inputDialogToggle">反馈</button>
     <!-- 输入框示例 -->

@@ -1,5 +1,6 @@
 package com.kjq.service;
 
+import com.kjq.POJO.Appoint;
 import com.kjq.utils.FFResult;
 
 import java.util.Map;
@@ -20,4 +21,14 @@ public interface AppointService {
     FFResult mark(Integer id, Integer rate);
 
     FFResult getMaintainAppoints(Integer status, Integer page, Integer limit, String title);
+
+    FFResult deleteAppoint(Integer id);
+
+    FFResult updateAppoint(String content, String appointTime, Integer id);
+
+    FFResult addAppoint(String content, String appointTime);
+
+    FFResult addPrice(Integer id, Integer price);
+
+    FFResult subAppoint(Integer id);
 }

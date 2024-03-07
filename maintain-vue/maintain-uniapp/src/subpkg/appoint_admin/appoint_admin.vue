@@ -54,6 +54,7 @@
                         <view class="uni-group">
                             <button class="uni-button" size="mini" type="primary" @click="tPrice(item.id, index)">确认</button>
                             <button class="uni-button" size="mini" type="warn" @click="fPrice(item.id, index)">取消</button>
+                            <button class="uni-button" size="mini" type="warn" @click="report(item.appointId)">举报</button>
                         </view>
                     </uni-td>
                 </uni-tr>
@@ -83,12 +84,16 @@
                         <view class="message">{{ item.price }}</view>
                     </uni-td>
                     <uni-td>
-                        <uni-rate v-model="rateValue" @change="onChange(item.id, index)" />
+                        <uni-rate v-model="item.rateValue" @change="onChange(item.id, index, item.rateValue)" />
                     </uni-td>
                 </uni-tr>
             </uni-table>
             <view class="uni-pagination-box"><uni-pagination show-icon :page-size="pageSize" :current="pageCurrent" :total="total" @change="change" /></view>
         </view>
+        <uni-popup ref="inputReport" type="dialog">
+        <uni-popup-dialog ref="inputClose"  mode="input" title="举报维修师"
+            placeholder="请输入举报内容" @confirm="dialogInputConfirm"></uni-popup-dialog>
+        </uni-popup>
   </view>
 </template>
 
@@ -110,6 +115,8 @@ export default {
             status: 0,
             // 评分记录
             rateValue: 0,
+            // 被举报者id
+            appointId: 0,
 		}
 	},
 	onLoad(option) {
@@ -180,16 +187,32 @@ export default {
             }
         },
         // 打分后的处理函数
-        async onChange(id, index){
+        async onChange(id, index, rateValue){
             const {data: res} = await uni.$http.post('/mark',{
                 id: id,
-                rate: this.rateValue
+                rate: rateValue
             })
             if(res.code == 20000){
                 this.tableData.splice(index, 1);
                 return uni.$showMsg("评分成功")
             }else{
                 return uni.$showMsg("评分失败")
+            }
+        },
+        // 举报维修师
+        async report(appointId){
+            this.appointId = appointId;
+            this.$refs.inputReport.open()
+        },
+        async dialogInputConfirm(val){
+            const {data: res} = await uni.$http.post("/addReport", {
+                appointId: this.appointId,
+                content: val
+            })
+            if(res.code === 20000){
+                return uni.$showMsg("举报成功")
+            }else{
+                return uni.$showMsg("举报失败")
             }
         }
 	}

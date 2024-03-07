@@ -27,4 +27,10 @@ public class SortServiceImpl implements SortService {
         page = (page - 1) * limit;
         return FFResult.success(StatusCodeEnum.SUCCESS, sortMapper.getAdminSorts(page, limit));
     }
+
+    @Override
+    public FFResult getSortList() {
+
+        return FFResult.success(StatusCodeEnum.SUCCESS, sortMapper.getSortList());
+    }
 }

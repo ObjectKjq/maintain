@@ -12,6 +12,7 @@ import com.kjq.model.vo.UserVo;
 import com.kjq.service.UserService;
 import com.kjq.utils.FFResult;
 import com.kjq.utils.JwtUtils;
+import com.kjq.utils.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -193,5 +194,91 @@ public class UserServiceImpl implements UserService {
     public FFResult getAdminUsers(Integer page, Integer limit) {
         page = (page - 1) * limit;
         return FFResult.success(StatusCodeEnum.SUCCESS, userMapper.getAdminUsers(page, limit));
+    }
+
+    @Override
+    public FFResult addUpload(MultipartFile file) {
+        List<String> listType = new ArrayList<>();
+        //限制图片格式
+        listType.add("jpg");
+        listType.add("png");
+        //判断用户原来的图片是不是默认的，如果是默认的不删除原来图片。
+        //如果不是默认的则删除图片库中的源文件
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+        User user = userMapper.queryAccountUser(name);
+
+        //获取jar包所在的目录
+        ApplicationHome ah = new ApplicationHome(getClass());
+        File jarF = ah.getSource();
+        String path = jarF.getParentFile().toString()+"/images/user/";
+        //判断目录是否创建
+        File filePath = new File(path);
+        if (!filePath.exists()){
+            filePath.mkdirs();
+        }
+
+        //判断文件上传类型
+        try {
+            //这里是hutool提供的工具类
+            String fileType = FileTypeUtil.getType(file.getInputStream());
+            boolean b = false;
+            for (String s : listType) {
+                if(fileType.equals(s)){
+                    b = true;
+                }
+            }
+            if (!b){
+                return FFResult.error(StatusCodeEnum.ERROR);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //判断用户头像是不是默认的，如果不是默认需要删除之前用户上传的头像数据
+        if(!user.getAvatarUrl().equals("https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png")){
+            //删除图片数据
+            String[] split = user.getAvatarUrl().split("/");
+            String nameFile = split[split.length-1];
+            File removeFile = new File(path + nameFile);
+            if (removeFile.exists()){
+                //删除文件
+                removeFile.delete();
+            }
+        }
+        //获取后缀
+        String type = FileUtil.extName(file.getOriginalFilename());
+        //获取uuid
+        String uuid = UUID.randomUUID().toString();
+        //拼写文件路径
+        File uploadFile = new File(path + uuid + StrUtil.DOT + type);
+
+        try {
+            file.transferTo(uploadFile);
+            //修改数据库的内容
+            user.setAvatarUrl("http://localhost:8081/images/user/"+uuid+StrUtil.DOT+type);
+            if(userMapper.updateAvatarUrl(user)){
+                return FFResult.success(StatusCodeEnum.SUCCESS, user.getAvatarUrl());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult updateMaintainAdminUser(String username, String password, String nPassword, String vPassword) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+        User user = userMapper.queryAccountUser(name);
+        if(!nPassword.equals(vPassword)){
+            return FFResult.error(StatusCodeEnum.ERROR);
+        }
+        if(!MD5Util.encode(password).equals(user.getUserPassword())){
+            return FFResult.error(StatusCodeEnum.ERROR);
+        }
+        if(!userMapper.updateMaintainAdmin(username, MD5Util.encode(nPassword), user.getId())){
+            return FFResult.error(StatusCodeEnum.ERROR);
+        }
+        return FFResult.success(StatusCodeEnum.SUCCESS);
     }
 }

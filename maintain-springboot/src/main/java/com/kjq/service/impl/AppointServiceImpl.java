@@ -9,6 +9,7 @@ import com.kjq.mapper.AppointMapper;
 import com.kjq.mapper.ScoreMapper;
 import com.kjq.mapper.UserMapper;
 import com.kjq.model.vo.AppointListVo;
+import com.kjq.model.vo.AppointVo;
 import com.kjq.service.AppointService;
 import com.kjq.utils.FFResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,10 +119,10 @@ public class AppointServiceImpl implements AppointService {
         User user = userMapper.queryAccountUser(username);
 
         //判断用户有没有评分过
-        Score tScore = scopeMapper.getScopeByUserIds(appoint.getAppointId(), user.getId());
-        if (tScore != null){
-            return FFResult.error(StatusCodeEnum.ERROR);
-        }
+        //Score tScore = scopeMapper.getScopeByUserIds(appoint.getAppointId(), user.getId());
+        //if (tScore != null){
+        //    return FFResult.error(StatusCodeEnum.ERROR);
+        //}
         rate *= 2;
         Score score = new Score();
         score.setScoreId(appoint.getAppointId());
@@ -145,7 +146,77 @@ public class AppointServiceImpl implements AppointService {
         String username = authentication.getName();
         User user = userMapper.queryAccountUser(username);
         page = (page - 1) * limit;
+        List<Appoint> maintainAppoints = appointMapper.getMaintainAppoints(page, limit, status, title, user.getId());
+        //获取数据总数
+        AppointVo appointVo = new AppointVo();
+        appointVo.setTotal(appointMapper.getAppointTotal(status, title, user.getId()));
+        maintainAppoints.add(appointVo);
+        return FFResult.success(StatusCodeEnum.SUCCESS, maintainAppoints);
+    }
 
-        return FFResult.success(StatusCodeEnum.SUCCESS, appointMapper.getMaintainAppoints(page, limit, status, title, user.getId()));
+    @Override
+    public FFResult deleteAppoint(Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userMapper.queryAccountUser(username);
+        if(appointMapper.deleteAppoint(id, user.getId())){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult updateAppoint(String content, String appointTime, Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userMapper.queryAccountUser(username);
+
+        if(appointMapper.updateMaintainAppoint(user.getId(), content, appointTime, id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult addAppoint(String content, String appointTime) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userMapper.queryAccountUser(username);
+
+        Appoint appoint = new Appoint();
+        appoint.setCreateTime(DateUtil.formatDate(DateUtil.date()));
+        appoint.setAppointId(user.getId());
+        appoint.setContent(content);
+        appoint.setAppointTime(appointTime);
+        appoint.setAppointStatus(1);
+        appoint.setStatus(0);
+
+        if(appointMapper.addAppoint(appoint)){
+            return FFResult.success(StatusCodeEnum.SUCCESS, appoint);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult addPrice(Integer id, Integer price) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userMapper.queryAccountUser(username);
+        if(appointMapper.addPrice(price, id, user.getId())){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult subAppoint(Integer id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userMapper.queryAccountUser(username);
+        if(appointMapper.subAppoint(id, user.getId())){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+
+        return FFResult.error(StatusCodeEnum.ERROR);
     }
 }

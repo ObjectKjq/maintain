@@ -1,11 +1,5 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="描述" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-    </div>
     <!-- 表格
     v-loading是否在加载中
     data数据源
@@ -46,7 +40,7 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[10, 20, 30, 40]"
+      :page-sizes="[3, 20, 30, 40]"
       :current-page="1"
       background
       layout="total, sizes, prev, pager, next, jumper"
@@ -57,7 +51,7 @@
 </template>
 
 <script>
-import {getAppoints} from '@/api/maintain'
+import {getAppoints, subAppoint} from '@/api/maintain'
 export default {
   data() {
     return {
@@ -68,12 +62,12 @@ export default {
         // 第几页
         page: 1,
         // 每页多少条数据
-        limit: 20,
+        limit: 3,
         // 搜索题目名称
         title: undefined,
       },
       // 总共有多少条数据
-      total: 100,
+      total: 0,
       // 列表是否在加载中
       listLoading: false,
       // 数据绑定到这里
@@ -83,14 +77,55 @@ export default {
     }
   },
   methods: {
-    handleFilter(){
-
+    handleEdit(index, appoint){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+          subAppoint(appoint).then((res)=>{
+            if(res.code === 20000){
+              this.list.splice(index, 1);
+              this.$message({
+                type: 'success',
+                message: '提交成功'
+              }); 
+            }else{
+              this.$message({
+                type: 'error',
+                message: '提交失败'
+              }); 
+            }
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     },
-    handleSizeChange(){
-
+    handleSizeChange(limit){
+      this.listQuery.limit = limit;
+      this.listQuery.page = 1;
+      this.listLoading = true;
+      getAppoints(this.listQuery).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().total;
+          this.listLoading = false;
+        }
+      })
     },
-    handleCurrentChange(){
-      
+    handleCurrentChange(page){
+      this.listQuery.page = page;
+      this.listLoading = true;
+      getAppoints(this.listQuery).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().total;
+          this.listLoading = false;
+        }
+      })
     }
   },
   created(){
@@ -99,6 +134,7 @@ export default {
     getAppoints(this.listQuery).then((res)=>{
       if(res.code == 20000){
         this.list = res.data;
+        this.total = this.list.pop().total;
         this.listLoading = false;
       }
     })

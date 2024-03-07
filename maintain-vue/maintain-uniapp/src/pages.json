@@ -53,6 +53,10 @@
 				{
 					"path": "appoint_admin/appoint_admin",
 					"style": {}
+				},
+				{
+					"path": "consult_list/consult_list",
+					"style": {}
 				}
 			]
 		}

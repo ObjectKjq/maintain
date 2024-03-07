@@ -39,6 +39,11 @@
             <button type="default" size="mini" @click="close">取消</button>
         </view>
     </uni-popup>
+
+    <uni-popup ref="inputConsult" type="dialog">
+      <uni-popup-dialog ref="inputClose"  mode="input" title="咨询维修师"
+        placeholder="请输入消息" @confirm="dialogInputConfirm"></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -52,9 +57,21 @@ export default {
         }
     },
     methods: {
+        async dialogInputConfirm(val){
+            const {data: res} = await uni.$http.post("/addConsult", {
+                content: val,
+                appointId: this.appointData.appointId
+            })
+            
+            if(res.code == 20000){
+                return uni.$showMsg('咨询成功')
+            }else{
+                return uni.$showMsg('预约失败')
+            }
+        },
         // 咨询维修师
         consult(){
-
+            this.$refs.inputConsult.open()
         },
         // 调用预约接口预约
         async byAppoint(){

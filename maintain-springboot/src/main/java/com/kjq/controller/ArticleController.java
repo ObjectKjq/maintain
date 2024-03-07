@@ -1,6 +1,8 @@
 package com.kjq.controller;
 
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.kjq.model.vo.ArticleVo;
 import com.kjq.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -37,5 +39,32 @@ public class ArticleController {
     @GetMapping("/admin/getArticles")
     public String getAdminArticles(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit, @RequestParam("status") Integer status){
         return JSONUtil.toJsonStr(articleService.getAdminArticles(page, limit, status));
+    }
+
+    @Secured({"ROLE_maintain"})
+    @PostMapping("/maintain/addArticle")
+    public String addArticle(@RequestBody JSONObject jsonObject){
+        Integer sortId = jsonObject.getInt("sort");
+        String title = jsonObject.getStr("title");
+        String content = jsonObject.getStr("content");
+        return JSONUtil.toJsonStr(articleService.addArticle(sortId, title, content));
+    }
+
+    @Secured({"ROLE_maintain"})
+    @GetMapping("/maintain/getArticle/{id}")
+    public String getMaintainArticle(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(articleService.getMaintainArticle(id));
+    }
+
+    @Secured({"ROLE_maintain"})
+    @PutMapping("/maintain/updateArticle")
+    public String updateArticle(@RequestBody ArticleVo articleVo){
+        return JSONUtil.toJsonStr(articleService.updateArticle(articleVo));
+    }
+
+    @Secured({"ROLE_maintain"})
+    @PutMapping("/maintain/deleteArticle/{id}")
+    public String deleteArticle(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(articleService.deleteArticle(id));
     }
 }

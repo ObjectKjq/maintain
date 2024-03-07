@@ -2,9 +2,7 @@ package com.kjq.mapper;
 
 import com.kjq.POJO.Appoint;
 import com.kjq.model.vo.AppointListVo;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -36,4 +34,23 @@ public interface AppointMapper {
     boolean updateStatus(Integer id, Integer id1);
 
     List<Appoint> getMaintainAppoints(Integer page, Integer limit, Integer status, String title, Integer id);
+
+
+    Integer getAppointTotal(Integer status, String title, Integer id);
+
+    @Update("update appoint set appoint_status = 0 where appoint_id = #{userId} and appoint_status = 1 and id = #{id}")
+    boolean deleteAppoint(Integer id, Integer userId);
+
+    @Update("update appoint set content = #{content}, appoint_time = #{appointTime} where id = #{id} and appoint_id = #{appointId} and appoint_status = 1")
+    boolean updateMaintainAppoint(Integer appointId, String content, String appointTime, Integer id);
+
+    @Insert("insert into appoint(create_time, appoint_status, appoint_id, content, appoint_time, status) value (#{createTime}, #{appointStatus}, #{appointId}, #{content}, #{appointTime}, #{status})")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    boolean addAppoint(Appoint appoint);
+
+    @Update("update appoint set price = #{price}, status = 2 where id = #{id} and appoint_id = #{appointId} and appoint_status = 1 and status = 1")
+    boolean addPrice(Integer price, Integer id, Integer appointId);
+
+    @Update("update appoint set status = 4 where status = 3 and appoint_id = #{appointId} and appoint_status = 1 and id = #{id}")
+    boolean subAppoint(Integer id, Integer appointId);
 }

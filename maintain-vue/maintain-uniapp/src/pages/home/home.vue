@@ -10,7 +10,7 @@
         </view>
         <view class="article-list" >
             <uni-card v-for="item in articles" :key="item.id" @click="toArticle(item.id)" :title="item.title" :extra="item.createTime.substring(0, 10)">
-                <text class="uni-body">{{item.content.substring(0, 40)}}</text>
+                <text class="uni-body">{{item.content.replace(/<[^<>]+>/g,"").replace(/\s/g,"").replace(/[\r\n]/g).substring(0, 40)}}</text>
             </uni-card>
         </view>
     </view>

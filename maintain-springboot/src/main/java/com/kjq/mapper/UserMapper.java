@@ -24,4 +24,7 @@ public interface UserMapper {
 
     @Select("select * from `user` limit #{page}, #{limit}")
     List<User> getAdminUsers(Integer page, Integer limit);
+
+    @Update("update `user` set username = #{username}, user_password = #{password} where id = #{id} and user_status = 1")
+    boolean updateMaintainAdmin(String username, String password, Integer id);
 }

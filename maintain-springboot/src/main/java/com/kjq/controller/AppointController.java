@@ -2,6 +2,7 @@ package com.kjq.controller;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.kjq.POJO.Appoint;
 import com.kjq.service.AppointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -82,5 +83,40 @@ public class AppointController {
             @RequestParam(value = "title", required = false) String title
     ){
         return JSONUtil.toJsonStr(appointService.getMaintainAppoints(status, page, limit, title));
+    }
+
+    //删除预约消息
+    @Secured({"ROLE_maintain"})
+    @DeleteMapping("/maintain/appoint")
+    public String deleteAppoint(@RequestParam Integer id){
+        return JSONUtil.toJsonStr(appointService.deleteAppoint(id));
+    }
+
+    //修改数据
+    @Secured({"ROLE_maintain"})
+    @PutMapping("/maintain/appoint")
+    public String updateAppoint(@RequestParam String content, @RequestParam String appointTime, @RequestParam Integer id){
+        return JSONUtil.toJsonStr(appointService.updateAppoint(content, appointTime, id));
+    }
+
+    //修改数据
+    @Secured({"ROLE_maintain"})
+    @PostMapping("/maintain/appoint")
+    public String addAppoint(@RequestParam String content, @RequestParam String appointTime){
+        return JSONUtil.toJsonStr(appointService.addAppoint(content, appointTime));
+    }
+
+    //添加价格
+    @Secured({"ROLE_maintain"})
+    @PutMapping("/maintain/addPrice")
+    public String addPrice(@RequestParam Integer price, @RequestParam Integer id){
+        return JSONUtil.toJsonStr(appointService.addPrice(id, price));
+    }
+
+    //提交订单
+    @Secured({"ROLE_maintain"})
+    @PutMapping("/maintain/subAppoint")
+    public String subAppoint(@RequestParam Integer id){
+        return JSONUtil.toJsonStr(appointService.subAppoint(id));
     }
 }

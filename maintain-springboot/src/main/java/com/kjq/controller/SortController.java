@@ -15,7 +15,6 @@ public class SortController {
     SortService sortService;
 
     @GetMapping("/getSorts")
-//    @Secured({"ROLE_user"})
     public String getSorts(){
         return JSONUtil.toJsonStr(sortService.getSorts());
     }
@@ -23,5 +22,11 @@ public class SortController {
     @GetMapping("/admin/getSorts")
     public String getAdminSorts(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit){
         return JSONUtil.toJsonStr(sortService.getAdminSorts(page, limit));
+    }
+
+    @Secured({"ROLE_maintain"})
+    @GetMapping("/maintain/getSort")
+    public String getSortList(){
+        return JSONUtil.toJsonStr(sortService.getSortList());
     }
 }

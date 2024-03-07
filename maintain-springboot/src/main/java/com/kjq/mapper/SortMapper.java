@@ -12,4 +12,10 @@ public interface SortMapper {
 
     @Select("select * from sort where sort_status = 1 limit #{page}, #{limit}")
     List<Sort> getAdminSorts(Integer page, Integer limit);
+
+    @Select("select * from sort where sort_status = 1")
+    List<Sort> getSortList();
+
+    @Select("select id from sort where content = #{sort} and sort_status = 1")
+    Integer getNameId(String sort);
 }

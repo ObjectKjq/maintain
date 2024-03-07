@@ -20,4 +20,8 @@ public interface UserService {
     FFResult updateUser(String name, String sex);
 
     FFResult getAdminUsers(Integer page, Integer limit);
+
+    FFResult addUpload(MultipartFile file);
+
+    FFResult updateMaintainAdminUser(String username, String password, String nPassword, String vPassword);
 }

@@ -6,4 +6,6 @@ public interface SortService {
     FFResult getSorts();
 
     FFResult getAdminSorts(Integer page, Integer limit);
+
+    FFResult getSortList();
 }

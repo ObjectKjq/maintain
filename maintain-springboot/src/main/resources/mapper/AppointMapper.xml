@@ -69,4 +69,14 @@
         </if>
             LIMIT #{page}, #{limit}
     </select>
+
+    <select id="getAppointTotal" resultType="Integer">
+        select count(*) from appoint
+        where appoint_id = #{id}
+          and appoint_status = 1
+        and status = #{status}
+        <if test="title != null">
+            AND content LIKE '%${title}%'
+        </if>
+    </select>
 </mapper>

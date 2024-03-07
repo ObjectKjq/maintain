@@ -14,4 +14,5 @@ public class Consult {
     private String content;
     private Integer consultStatus;
     private String createTime;
+    private Integer status;
 }

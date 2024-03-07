@@ -1,5 +1,6 @@
 package com.kjq.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
@@ -117,5 +118,22 @@ public class UserController {
     @GetMapping("/admin/getUsers")
     public String getUsers(@RequestParam("page") Integer page, @RequestParam("limit") Integer limit){
         return JSONUtil.toJsonStr(userService.getAdminUsers(page, limit));
+    }
+
+    @Secured({"ROLE_maintain", "ROLE_admin"})
+    @PostMapping("/upload/avatar")
+    public String upload(@RequestParam("file") MultipartFile file){
+        System.out.println(file.getOriginalFilename());
+        return JSONUtil.toJsonStr(userService.addUpload(file));
+    }
+
+    @Secured({"ROLE_maintain", "ROLE_admin"})
+    @PutMapping("/updateMaintainAdminUser")
+    public String updateMaintainAdminUser(@RequestBody JSONObject jsonObject){
+        String username = jsonObject.getStr("username");
+        String password = jsonObject.getStr("password");
+        String nPassword = jsonObject.getStr("nPassword");
+        String vPassword = jsonObject.getStr("vPassword");
+        return JSONUtil.toJsonStr(userService.updateMaintainAdminUser(username, password, nPassword, vPassword));
     }
 }

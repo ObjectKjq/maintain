@@ -1,11 +1,5 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="描述" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-    </div>
     <!-- 表格
     v-loading是否在加载中
     data数据源
@@ -30,8 +24,6 @@
       </el-table-column>
       <el-table-column prop="message" label="预约信息">
       </el-table-column>
-      <el-table-column prop="price" label="价格" width="180">
-      </el-table-column>
       <el-table-column prop="appointTime" label="预约日期" width="180">
       </el-table-column>
       <el-table-column label="操作" width="110">
@@ -46,21 +38,39 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[10, 20, 30, 40]"
+      :page-sizes="[3, 20, 30, 40]"
       :current-page="1"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="total" 
       class="page">
     </el-pagination>
+
+    <!-- 弹窗 -->
+    <el-dialog title="添加价格" :visible.sync="dialogFormVisible">
+      <el-form :model="appoint">
+        <el-form-item label="价格:" :label-width="formLabelWidth">
+          <el-input v-model="appoint.price" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addPrice">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getAppoints} from '@/api/maintain'
+import {getAppoints, addPrice} from '@/api/maintain'
 export default {
   data() {
     return {
+      formLabelWidth: '80px',
+      dialogFormVisible:false,
+      // 弹窗数据
+      appoint:{},
+      index: -1,
       // 搜索发送的数据
       listQuery: {
         // 预约状态
@@ -68,12 +78,10 @@ export default {
         // 第几页
         page: 1,
         // 每页多少条数据
-        limit: 20,
-        // 搜索题目名称
-        title: undefined,
+        limit: 3,
       },
       // 总共有多少条数据
-      total: 100,
+      total: 0,
       // 列表是否在加载中
       listLoading: false,
       // 数据绑定到这里
@@ -81,14 +89,52 @@ export default {
     }
   },
   methods: {
-    handleFilter(){
-
+    addPrice(){
+      addPrice(this.appoint).then((res)=>{
+        if(res.code === 20000){
+          this.list[this.index] = this.appoint;
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          })
+        }else{
+          this.$message({
+            type: 'error',
+            message: '添加失败'
+          })
+        }
+        this.dialogFormVisible = false;
+        this.appoint = {};
+        this.index = -1;
+      })
     },
-    handleSizeChange(){
-
+    handleEdit(index, appoint){
+      this.appoint = appoint
+      this.dialogFormVisible = true;
+      this.index = index;
     },
-    handleCurrentChange(){
-      
+    handleSizeChange(limit){
+      this.listQuery.limit = limit;
+      this.listQuery.page = 1;
+      this.listLoading = true;
+      getAppoints(this.listQuery).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().total;
+          this.listLoading = false;
+        }
+      })
+    },
+    handleCurrentChange(page){
+      this.listQuery.page = page;
+      this.listLoading = true;
+      getAppoints(this.listQuery).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().total;
+          this.listLoading = false;
+        }
+      })
     }
   },
   created(){
@@ -97,6 +143,7 @@ export default {
     getAppoints(this.listQuery).then((res)=>{
       if(res.code == 20000){
         this.list = res.data;
+        this.total = this.list.pop().total;
         this.listLoading = false;
       }
     })

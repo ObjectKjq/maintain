@@ -8,6 +8,8 @@
             consult.id AS id,
             send.username AS send_name,
             accept.username AS accept_name,
+            send.id as user_send_id,
+            accept.id as user_accept_id,
             consult.content AS content,
             consult.create_time AS create_time
         FROM consult

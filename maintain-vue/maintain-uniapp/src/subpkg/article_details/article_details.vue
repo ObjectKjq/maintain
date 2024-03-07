@@ -7,9 +7,8 @@
         <uni-title class="h5" type="h5" :title="article.createTime.substring(0, 10)"></uni-title>
     </view>
     <view>
-        <text class="uni-text">{{article.content}}</text>
+        <span class="uni-text" v-html="article.content"></span>
     </view>
-    <view>打赏用的二维码</view>
   </view>
 </template>
 

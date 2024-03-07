@@ -39,7 +39,7 @@
       </el-table-column>
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary"  @click="handleEdit(scope.$index, scope.row)">
+          <el-button size="mini" type="success"  @click="handleEdit(scope.$index, scope.row)">
             通过
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
