@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
+import com.kjq.POJO.User;
 import com.kjq.enums.StatusCodeEnum;
 import com.kjq.service.UserService;
 import com.kjq.utils.FFResult;
@@ -123,7 +124,6 @@ public class UserController {
     @Secured({"ROLE_maintain", "ROLE_admin"})
     @PostMapping("/upload/avatar")
     public String upload(@RequestParam("file") MultipartFile file){
-        System.out.println(file.getOriginalFilename());
         return JSONUtil.toJsonStr(userService.addUpload(file));
     }
 
@@ -135,5 +135,23 @@ public class UserController {
         String nPassword = jsonObject.getStr("nPassword");
         String vPassword = jsonObject.getStr("vPassword");
         return JSONUtil.toJsonStr(userService.updateMaintainAdminUser(username, password, nPassword, vPassword));
+    }
+
+    @Secured({"ROLE_admin"})
+    @PostMapping("/admin/user")
+    public String addUser(@RequestBody User user){
+        return JSONUtil.toJsonStr(userService.addUser(user));
+    }
+
+    @Secured({"ROLE_admin"})
+    @PutMapping("/admin/user")
+    public String updateAdminUser(@RequestBody User user){
+        return JSONUtil.toJsonStr(userService.updateAdminUser(user));
+    }
+
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/user/{id}")
+    public String deleteAdminUser(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(userService.deleteAdminUser(id));
     }
 }

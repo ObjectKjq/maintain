@@ -37,4 +37,16 @@ public class CertificateController {
     public String deleteCertificate(@PathVariable Integer id){
         return JSONUtil.toJsonStr(certificateService.deleteCertificate(id));
     }
+
+    @Secured({"ROLE_admin"})
+    @PutMapping("/admin/passCertificate/{id}")
+    public String passCertificate(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(certificateService.passCertificate(id));
+    }
+
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/downCertificate/{id}")
+    public String downCertificate(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(certificateService.downCertificate(id));
+    }
 }

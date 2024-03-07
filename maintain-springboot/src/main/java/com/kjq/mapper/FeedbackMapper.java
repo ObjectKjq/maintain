@@ -4,6 +4,7 @@ import com.kjq.POJO.Feedback;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -14,4 +15,10 @@ public interface FeedbackMapper {
 
     @Select("select * from feedback where feedback_status = 1 limit #{page}, #{limit}")
     List<Feedback> getAdminFeedback(Integer page, Integer limit);
+
+    @Select("select count(*) from feedback where feedback_status = 1")
+    Integer getTotal();
+
+    @Update("update feedback set feedback_status = 0 where id = #{id}")
+    boolean deleteAdminFeedback(Integer id);
 }

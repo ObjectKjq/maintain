@@ -4,9 +4,6 @@
       <el-button class="filter-item" type="warning" icon="el-icon-s-open" @click="toggleSelection">
         清空选择
       </el-button>
-      <el-button class="filter-item" type="danger" icon="el-icon-delete-solid" @click="deleteSelection">
-        删除选择
-      </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="success" icon="el-icon-edit" @click="handleCreate">
         添加
       </el-button>
@@ -46,30 +43,48 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[10, 20, 30, 40]"
+      :page-sizes="[3, 20, 30, 40]"
       :current-page="1"
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="total" 
       class="page">
     </el-pagination>
+
+    <!-- 弹窗 -->
+    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="分类:" :label-width="formLabelWidth">
+          <el-input v-model="form.content" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="updateForm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import {getSorts} from '@/api/admin'
+import {getSorts, addAdminSort, updateAdminSort, deleteAdminSort} from '@/api/admin'
 export default {
   data() {
     return {
+      formLabelWidth: '80px',
+      dialogFormVisible: false,
+      title:'',
+      form:{},
+      index: -1,
       // 搜索发送的数据
       params: {
         // 第几页
         page: 1,
         // 每页多少条数据
-        limit: 20,
+        limit: 3,
       },
       // 总共有多少条数据
-      total: 100,
+      total: 0,
       // 列表是否在加载中
       listLoading: false,
       // 数据绑定到这里
@@ -79,7 +94,88 @@ export default {
     }
   },
   methods: {
+    handleDelete(index, sort){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteAdminSort(sort.id).then((res)=>{
+          if(res.code === 20000){
+            this.list.splice(index, 1);
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }else{
+            this.$message({
+              type: 'error',
+              message: '删除失败!'
+            });
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
+    updateForm(){
+      if(this.index == -1){
+        // 添加
+        addAdminSort(this.form).then((res)=>{
+          if(res.code === 20000){
+            this.list.unshift(res.data)
+            this.$message({
+              type: 'success',
+              message: '添加成功'
+            })
+          }else{
+            this.$message({
+              type: 'error',
+              message: '添加失败'
+            })
+          }
+          this.dialogFormVisible = false;
+          this.title = '';
+          this.form = {};
+        })
+      }else{
+        // 编辑
+        updateAdminSort(this.form).then((res)=>{
+          if(res.code === 20000){
+            this.list[this.index] = this.form;
+            this.$message({
+              type: 'success',
+              message: '修改成功'
+            })
+          }else{
+            this.$message({
+              type: 'error',
+              message: '修改失败'
+            })
+          }
+          this.dialogFormVisible = false;
+          this.title = '';
+          this.form = {};
+          this.index = -1;
+        })
+      }
+    },
+    // 编辑
+    handleEdit(index, sort){
+      this.dialogFormVisible = true;
+      this.title = '编辑分类';
+      this.form = sort;
+      this.index = index;
+    },
+    // 添加
     handleCreate(){
+      this.form = {};
+      this.index = -1;
+      this.dialogFormVisible = true;
+      this.title = '添加分类';
 
     },
     handleSelectionChange(val) {
@@ -88,15 +184,28 @@ export default {
     toggleSelection() {
       this.$refs.multipleTable.clearSelection();
     },
-    // 发送网络请求删除所选择的数据
-    deleteSelection(){
-
+    handleSizeChange(limit){
+      this.params.limit = limit;
+      this.params.page = 1;
+      this.listLoading = true;
+      getSorts(this.params).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().id;
+          this.listLoading = false;
+        }
+      })
     },
-    handleSizeChange(){
-
-    },
-    handleCurrentChange(){
-      
+    handleCurrentChange(page){
+      this.params.page = page;
+      this.listLoading = true;
+      getSorts(this.params).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().id;
+          this.listLoading = false;
+        }
+      })
     }
   },
   created(){
@@ -105,6 +214,7 @@ export default {
     getSorts(this.params).then((res)=>{
       if(res.code == 20000){
         this.list = res.data;
+        this.total = this.list.pop().id;
         this.listLoading = false;
       }
     })

@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ReportServiceImpl implements ReportService {
 
@@ -25,7 +27,11 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public FFResult getAdminReports(Integer page, Integer limit) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, reportMapper.getAdminReports(page, limit));
+        List<Report> adminReports = reportMapper.getAdminReports(page, limit);
+        Report report = new Report();
+        report.setId(reportMapper.getTotal());
+        adminReports.add(report);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminReports);
     }
 
     @Override
@@ -40,6 +46,14 @@ public class ReportServiceImpl implements ReportService {
         report.setByReportId(appointId);
         report.setContent(content);
         if(reportMapper.addReport(report)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult deleteAdminReport(Integer id) {
+        if(reportMapper.deleteAdminReport(id)){
             return FFResult.success(StatusCodeEnum.SUCCESS);
         }
         return FFResult.error(StatusCodeEnum.ERROR);

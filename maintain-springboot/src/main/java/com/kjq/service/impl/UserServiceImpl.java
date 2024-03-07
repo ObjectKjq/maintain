@@ -88,7 +88,6 @@ public class UserServiceImpl implements UserService {
             addUser.setUserPassword(new MD5PasswordEncoder().encode("123"));
             addUser.setUserAccount(openid);
             addUser.setUserRole(0);
-            addUser.setAvatarUrl("https://qiniu-web-assets.dcloud.net.cn/unidoc/zh/unicloudlogo.png");
             addUser.setUserStatus(1);
             addUser.setCreateTime(DateUtil.formatDate(DateUtil.date()));
             if(!userMapper.addUser(addUser)){
@@ -193,7 +192,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public FFResult getAdminUsers(Integer page, Integer limit) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, userMapper.getAdminUsers(page, limit));
+        User user = new User();
+        user.setId(userMapper.getTotal());
+        List<User> adminUsers = userMapper.getAdminUsers(page, limit);
+        adminUsers.add(user);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminUsers);
     }
 
     @Override
@@ -207,7 +210,6 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
         User user = userMapper.queryAccountUser(name);
-
         //获取jar包所在的目录
         ApplicationHome ah = new ApplicationHome(getClass());
         File jarF = ah.getSource();
@@ -280,5 +282,33 @@ public class UserServiceImpl implements UserService {
             return FFResult.error(StatusCodeEnum.ERROR);
         }
         return FFResult.success(StatusCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public FFResult addUser(User user) {
+        user.setUserStatus(1);
+        user.setCreateTime(DateUtil.formatDate(DateUtil.date()));
+        user.setUserPassword(MD5Util.encode(user.getUserPassword()));
+        if(userMapper.addUser(user)){
+            return FFResult.success(StatusCodeEnum.SUCCESS, user);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult updateAdminUser(User user) {
+        user.setUserPassword(MD5Util.encode(user.getUserPassword()));
+        if(userMapper.updateAdminUser(user)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult deleteAdminUser(Integer id) {
+        if(userMapper.deleteAdminUser(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
     }
 }

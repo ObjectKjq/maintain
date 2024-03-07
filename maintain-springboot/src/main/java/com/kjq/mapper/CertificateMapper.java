@@ -23,4 +23,13 @@ public interface CertificateMapper {
 
     @Delete("delete from certificate where id = #{id} and user_id = #{userId}")
     boolean deleteCertificate(Integer id, Integer userId);
+
+    @Select("select count(*) from certificate where certificate_status = 1")
+    Integer getAdminTotal();
+
+    @Update("update certificate set certificate_status = 1 where id = #{id}")
+    boolean passCertificate(Integer id);
+
+    @Delete("delete from certificate where id = #{id}")
+    boolean downCertificate(Integer id);
 }

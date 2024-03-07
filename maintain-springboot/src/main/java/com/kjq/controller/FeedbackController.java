@@ -26,4 +26,9 @@ public class FeedbackController {
         return JSONUtil.toJsonStr(feedbackService.getAdminFeedback(page, limit));
     }
 
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/feedback/{id}")
+    public String deleteAdminFeedback(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(feedbackService.deleteAdminFeedback(id));
+    }
 }

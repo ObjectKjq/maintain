@@ -42,7 +42,11 @@ public class ConsultServiceImpl implements ConsultService {
     @Override
     public FFResult getAdminConsults(Integer page, Integer limit) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, consultMapper.getAdminConsults(page, limit));
+        List<ConsultVo> adminConsults = consultMapper.getAdminConsults(page, limit);
+        ConsultVo consultVo = new ConsultVo();
+        consultVo.setId(consultMapper.getAdminTotal());
+        adminConsults.add(consultVo);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminConsults);
     }
 
     @Override
@@ -106,5 +110,13 @@ public class ConsultServiceImpl implements ConsultService {
             return FFResult.error(StatusCodeEnum.ERROR);
         }
         return FFResult.success(StatusCodeEnum.SUCCESS);
+    }
+
+    @Override
+    public FFResult deleteAdminConsult(Integer id) {
+        if(consultMapper.deleteAdminConsult(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
     }
 }

@@ -59,7 +59,11 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public FFResult getAdminArticles(Integer page, Integer limit, Integer status) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, articleMapper.getAdminArticles(page, limit, status));
+        List<ArticleVo> adminArticles = articleMapper.getAdminArticles(page, limit, status);
+        ArticleVo articleVo = new ArticleVo();
+        articleVo.setId(articleMapper.getAdminTotal(status));
+        adminArticles.add(articleVo);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminArticles);
     }
 
     @Override
@@ -84,7 +88,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public FFResult getMaintainArticle(Integer id) {
-
         return FFResult.success(StatusCodeEnum.SUCCESS, articleMapper.getMaintainArticle(id));
     }
 
@@ -107,6 +110,30 @@ public class ArticleServiceImpl implements ArticleService {
         String username = authentication.getName();
         User user = userMapper.queryAccountUser(username);
         if(articleMapper.deleteArticle(id, user.getId())){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult deleteAdminArticle(Integer id) {
+        if(articleMapper.deleteAdminArticle(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult passArticle(Integer id) {
+        if(articleMapper.passArticle(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult downArticle(ArticleVo articleVo) {
+        if(articleMapper.downArticle(articleVo.getId())){
             return FFResult.success(StatusCodeEnum.SUCCESS);
         }
         return FFResult.error(StatusCodeEnum.ERROR);

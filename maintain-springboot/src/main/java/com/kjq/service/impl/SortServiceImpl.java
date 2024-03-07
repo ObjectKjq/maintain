@@ -1,5 +1,6 @@
 package com.kjq.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.kjq.POJO.Sort;
 import com.kjq.enums.StatusCodeEnum;
 import com.kjq.mapper.SortMapper;
@@ -25,12 +26,42 @@ public class SortServiceImpl implements SortService {
     @Override
     public FFResult getAdminSorts(Integer page, Integer limit) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, sortMapper.getAdminSorts(page, limit));
+        List<Sort> adminSorts = sortMapper.getAdminSorts(page, limit);
+        Sort sort = new Sort();
+        sort.setId(sortMapper.getTotal());
+        adminSorts.add(sort);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminSorts);
     }
 
     @Override
     public FFResult getSortList() {
 
         return FFResult.success(StatusCodeEnum.SUCCESS, sortMapper.getSortList());
+    }
+
+    @Override
+    public FFResult addAdminSort(Sort sort) {
+        sort.setCreateTime(DateUtil.formatDate(DateUtil.date()));
+        sort.setSortStatus(1);
+        if(sortMapper.addAdminSort(sort)){
+            return FFResult.success(StatusCodeEnum.SUCCESS, sort);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult updateAdminSort(Sort sort) {
+        if(sortMapper.updateAdminSort(sort)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult deleteAdminSort(Integer id) {
+        if(sortMapper.deleteAdminSort(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
     }
 }

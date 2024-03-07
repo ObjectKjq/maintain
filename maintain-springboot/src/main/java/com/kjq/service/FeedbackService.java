@@ -6,4 +6,6 @@ public interface FeedbackService {
     FFResult addFeedback(String content);
 
     FFResult getAdminFeedback(Integer page, Integer limit);
+
+    FFResult deleteAdminFeedback(Integer id);
 }

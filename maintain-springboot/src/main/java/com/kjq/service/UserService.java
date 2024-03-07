@@ -24,4 +24,10 @@ public interface UserService {
     FFResult addUpload(MultipartFile file);
 
     FFResult updateMaintainAdminUser(String username, String password, String nPassword, String vPassword);
+
+    FFResult addUser(User user);
+
+    FFResult updateAdminUser(User user);
+
+    FFResult deleteAdminUser(Integer id);
 }

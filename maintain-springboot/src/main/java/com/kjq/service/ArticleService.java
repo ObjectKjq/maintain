@@ -19,4 +19,10 @@ public interface ArticleService {
     FFResult updateArticle(ArticleVo articleVo);
 
     FFResult deleteArticle(Integer id);
+
+    FFResult deleteAdminArticle(Integer id);
+
+    FFResult passArticle(Integer id);
+
+    FFResult downArticle(ArticleVo articleVo);
 }

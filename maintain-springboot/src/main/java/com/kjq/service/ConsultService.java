@@ -15,4 +15,6 @@ public interface ConsultService {
     FFResult deleteConsult(Integer id);
 
     FFResult reply(Consult consult);
+
+    FFResult deleteAdminConsult(Integer id);
 }

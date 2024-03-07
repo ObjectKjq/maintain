@@ -50,4 +50,10 @@ public class ConsultController {
     public String reply(@RequestBody Consult consult){
         return JSONUtil.toJsonStr(consultService.reply(consult));
     }
+
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/consult/{id}")
+    public String deleteAdminConsult(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(consultService.deleteAdminConsult(id));
+    }
 }

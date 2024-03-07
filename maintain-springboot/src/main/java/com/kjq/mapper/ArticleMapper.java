@@ -35,4 +35,16 @@ public interface ArticleMapper {
 
     @Delete("delete from article where id = #{id} and user_id = #{userId} and article_status = 1")
     boolean deleteArticle(Integer id, Integer userId);
+
+    @Select("select count(*) from article where article_status = #{status}")
+    Integer getAdminTotal(Integer status);
+
+    @Delete("delete from article where id = #{id}")
+    boolean deleteAdminArticle(Integer id);
+
+    @Update("update article set article_status = 1 where id = #{id}")
+    boolean passArticle(Integer id);
+
+    @Delete("delete from article where id = #{id};")
+    boolean downArticle(Integer id);
 }

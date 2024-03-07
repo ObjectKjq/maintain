@@ -42,7 +42,11 @@ public class CertificateServiceImpl implements CertificateService {
     @Override
     public FFResult getAdminCertificates(Integer page, Integer limit) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, certificateMapper.getAdminCertificates(page, limit));
+        Certificate certificate = new Certificate();
+        List<Certificate> adminCertificates = certificateMapper.getAdminCertificates(page, limit);
+        certificate.setId(certificateMapper.getAdminTotal());
+        adminCertificates.add(certificate);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminCertificates);
     }
 
     @Override
@@ -65,6 +69,22 @@ public class CertificateServiceImpl implements CertificateService {
         String username = authentication.getName();
         User user = userMapper.queryAccountUser(username);
         if(certificateMapper.deleteCertificate(id, user.getId())){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult passCertificate(Integer id) {
+        if(certificateMapper.passCertificate(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
+    }
+
+    @Override
+    public FFResult downCertificate(Integer id) {
+        if(certificateMapper.downCertificate(id)){
             return FFResult.success(StatusCodeEnum.SUCCESS);
         }
         return FFResult.error(StatusCodeEnum.ERROR);

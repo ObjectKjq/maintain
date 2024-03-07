@@ -25,4 +25,10 @@ public class ReportController {
         String content = jsonObject.getStr("content");
         return JSONUtil.toJsonStr(reportService.addReport(appointId, content));
     }
+
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/report/{id}")
+    public String deleteAdminReport(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(reportService.deleteAdminReport(id));
+    }
 }

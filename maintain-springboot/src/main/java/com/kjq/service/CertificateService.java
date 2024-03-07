@@ -11,4 +11,8 @@ public interface CertificateService {
     FFResult addCertificate(Certificate certificate);
 
     FFResult deleteCertificate(Integer id);
+
+    FFResult passCertificate(Integer id);
+
+    FFResult downCertificate(Integer id);
 }

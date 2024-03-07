@@ -30,4 +30,10 @@ public interface ConsultMapper {
 
     @Update("update consult set status = 1 where id = #{id} and user_accept_id = #{userId}")
     boolean updateIdStatus(Integer id, Integer userId);
+
+    @Select("select count(*) from consult where consult_status = 1")
+    Integer getAdminTotal();
+
+    @Update("update consult set consult_status = 0 where id = #{id}")
+    boolean deleteAdminConsult(Integer id);
 }

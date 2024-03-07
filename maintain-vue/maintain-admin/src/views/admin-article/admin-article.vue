@@ -4,9 +4,6 @@
       <el-button class="filter-item" type="warning" icon="el-icon-s-open" @click="toggleSelection">
         清空选择
       </el-button>
-      <el-button class="filter-item" type="danger" icon="el-icon-delete-solid" @click="deleteSelection">
-        删除选择
-      </el-button>
     </div>
 
     <el-table
@@ -32,12 +29,15 @@
       </el-table-column>
       <el-table-column prop="title" label="标题">
       </el-table-column>
-      <el-table-column prop="content" label="内容">
+      <el-table-column label="内容">
+        <template slot-scope="scope">
+          {{scope.row.content.replace(/<[^<>]+>/g,"").replace(/\s/g,"").replace(/[\r\n]/g).substring(0, 40)}}
+        </template>
       </el-table-column>
       <el-table-column label="操作" width="80">
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">
-            禁用
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -46,18 +46,18 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :page-sizes="[10, 20, 30, 40]"
+      :page-sizes="[3, 20, 30, 40]"
       :current-page="1"
       background
       layout="total, sizes, prev, pager, next, jumper"
-      :total="total" 
+      :total="total"
       class="page">
     </el-pagination>
   </div>
 </template>
 
 <script>
-import {getArticles} from '@/api/admin'
+import {getArticles, deleteAdminArticle} from '@/api/admin'
 export default {
   data() {
     return {
@@ -66,12 +66,12 @@ export default {
         // 第几页
         page: 1,
         // 每页多少条数据
-        limit: 20,
+        limit: 3,
 
         status: 1,
       },
       // 总共有多少条数据
-      total: 100,
+      total: 0,
       // 列表是否在加载中
       listLoading: false,
       // 数据绑定到这里
@@ -81,21 +81,61 @@ export default {
     }
   },
   methods: {
+    handleDelete(index, article){
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteAdminArticle(article.id).then((res)=>{
+          if(res.code === 20000){
+            this.list.splice(index, 1);
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }else{
+            this.$message({
+              type: 'error',
+              message: '删除失败!'
+            });
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
     toggleSelection() {
       this.$refs.multipleTable.clearSelection();
     },
-    // 发送网络请求删除所选择的数据
-    deleteSelection(){
-
+    handleSizeChange(limit){
+      this.params.limit = limit;
+      this.params.page = 1;
+      this.listLoading = true;
+      getArticles(this.params).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().id;
+          this.listLoading = false;
+        }
+      })
     },
-    handleSizeChange(){
-
-    },
-    handleCurrentChange(){
-      
+    handleCurrentChange(page){
+      this.params.page = page;
+      this.listLoading = true;
+      getArticles(this.params).then((res)=>{
+        if(res.code == 20000){
+          this.list = res.data;
+          this.total = this.list.pop().id;
+          this.listLoading = false;
+        }
+      })
     }
   },
   created(){
@@ -104,6 +144,7 @@ export default {
     getArticles(this.params).then((res)=>{
       if(res.code == 20000){
         this.list = res.data;
+        this.total = this.list.pop().id;
         this.listLoading = false;
       }
     })

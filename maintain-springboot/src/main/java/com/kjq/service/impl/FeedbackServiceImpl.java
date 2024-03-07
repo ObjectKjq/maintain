@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
 
@@ -43,6 +45,18 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FFResult getAdminFeedback(Integer page, Integer limit) {
         page = (page - 1) * limit;
-        return FFResult.success(StatusCodeEnum.SUCCESS, feedbackMapper.getAdminFeedback(page, limit));
+        List<Feedback> adminFeedbacks = feedbackMapper.getAdminFeedback(page, limit);
+        Feedback feedback = new Feedback();
+        feedback.setId(feedbackMapper.getTotal());
+        adminFeedbacks.add(feedback);
+        return FFResult.success(StatusCodeEnum.SUCCESS, adminFeedbacks);
+    }
+
+    @Override
+    public FFResult deleteAdminFeedback(Integer id) {
+        if(feedbackMapper.deleteAdminFeedback(id)){
+            return FFResult.success(StatusCodeEnum.SUCCESS);
+        }
+        return FFResult.error(StatusCodeEnum.ERROR);
     }
 }

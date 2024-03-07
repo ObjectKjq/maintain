@@ -67,4 +67,23 @@ public class ArticleController {
     public String deleteArticle(@PathVariable Integer id){
         return JSONUtil.toJsonStr(articleService.deleteArticle(id));
     }
+
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/article/{id}")
+    public String deleteAdminArticle(@PathVariable Integer id){
+        System.out.println(id);
+        return JSONUtil.toJsonStr(articleService.deleteAdminArticle(id));
+    }
+
+    @Secured({"ROLE_admin"})
+    @PutMapping("/admin/passArticle/{id}")
+    public String passArticle(@PathVariable Integer id){
+        return JSONUtil.toJsonStr(articleService.passArticle(id));
+    }
+
+    @Secured({"ROLE_admin"})
+    @DeleteMapping("/admin/downArticle")
+    public String downArticle(@RequestBody ArticleVo articleVo){
+        return JSONUtil.toJsonStr(articleService.downArticle(articleVo));
+    }
 }
